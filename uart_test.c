@@ -33,7 +33,6 @@ int main(int argc, char *argv[]) {
     tty.c_cflag &= ~CRTSCTS; 
     tty.c_cflag |= CREAD | CLOCAL; 
 
-    // Make it raw mode
     tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);
     tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL);
