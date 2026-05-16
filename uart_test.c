@@ -12,28 +12,26 @@ int main(int argc, char *argv[]) {
         printf("Usage: %s <serial_port>\n", argv[0]);
         return 1;
     }
-
-    // 1. Open the port
     int fd = open(argv[1], O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd < 0) {
         perror("Error opening serial port");
         return 1;
     }
-    fcntl(fd, F_SETFL, 0); // Clear non-blocking flag for reading
+    fcntl(fd, F_SETFL, 0); 
 
-    // 2. Configure termios for 115200 8N1
+
     struct termios tty;
     tcgetattr(fd, &tty);
     
     cfsetospeed(&tty, B115200);
     cfsetispeed(&tty, B115200);
 
-    tty.c_cflag &= ~PARENB; // No parity
-    tty.c_cflag &= ~CSTOPB; // 1 stop bit
+    tty.c_cflag &= ~PARENB; 
+    tty.c_cflag &= ~CSTOPB; 
     tty.c_cflag &= ~CSIZE;
-    tty.c_cflag |= CS8;     // 8 data bits
-    tty.c_cflag &= ~CRTSCTS; // No hardware flow control
-    tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines
+    tty.c_cflag |= CS8;     
+    tty.c_cflag &= ~CRTSCTS; 
+    tty.c_cflag |= CREAD | CLOCAL; 
 
     // Make it raw mode
     tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
@@ -43,19 +41,18 @@ int main(int argc, char *argv[]) {
 
     tcsetattr(fd, TCSANOW, &tty);
 
-    // 3. Transmit Data
+    
     char *msg = "LFX Mentorship Test!\r\n";
     write(fd, msg, strlen(msg));
     printf("Sent: %s", msg);
 
-    // 4. Receive Data with select() timeout
     fd_set read_fds;
     struct timeval timeout;
     char buffer[256];
 
     FD_ZERO(&read_fds);
     FD_SET(fd, &read_fds);
-    timeout.tv_sec = 2; // 2 second timeout
+    timeout.tv_sec = 2; 
     timeout.tv_usec = 0;
 
     printf("Waiting for response...\n");
